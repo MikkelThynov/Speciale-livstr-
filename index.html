@@ -28,7 +28,7 @@
         align-items: flex-start;
         justify-content: center;
         text-align: left;
-        max-width: 600px;
+        max-width: 500px;
       }
       h1 {
         font-size: 3rem;
@@ -43,15 +43,6 @@
         animation: fadeIn 1.5s ease-in-out forwards;
         animation-delay: 0.3s;
       }
-      .buttons {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        opacity: 0;
-        animation: fadeIn 2s ease-in-out forwards;
-        animation-delay: 0.6s;
-      }
       .blad-link {
         background-color: white;
         color: #1d1d1d;
@@ -65,6 +56,29 @@
       .blad-link:hover {
         background-color: #e8e4dd;
         transform: translateY(-2px);
+      }
+      .blad-button {
+        position: absolute;
+        background-color: white;
+        color: #1d1d1d;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s;
+        transform: translate(-50%, -50%);
+      }
+      .blad-button:hover {
+        background-color: #e8e4dd;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+      .blad-button.inactive {
+        background-color: #cccccc;
+        color: #666;
+        pointer-events: none;
+        cursor: default;
       }
 
       @keyframes fadeIn {
@@ -99,6 +113,24 @@
         }
       }
     </style>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        for (let i = 1; i <= 12; i++) {
+          const key = `livstrae_media_${i}`;
+          const data = JSON.parse(localStorage.getItem(key) || "[]");
+          const btn = document.querySelector(`.blad-button[data-blad='${i}']`);
+          if (btn) {
+            if (data.length === 0) {
+              btn.classList.add("inactive");
+              btn.removeAttribute("href");
+            } else {
+              btn.classList.remove("inactive");
+              btn.setAttribute("href", `upload.html?blad=${i}`);
+            }
+          }
+        }
+      });
+    </script>
   </head>
   <body>
     <div class="overlay">
@@ -107,12 +139,38 @@
         Hvert blad rummer en del af din historie. Klik på et blad og begynd din
         rejse gennem minder, tanker og oplevelser.
       </p>
-      <div class="buttons">
-        <a class="blad-link" href="upload.html?blad=1">Blad 1</a>
-        <a class="blad-link" href="upload.html?blad=2">Blad 2</a>
-        <a class="blad-link" href="upload.html?blad=3">Blad 3</a>
-        <a class="blad-link" href="upload.html?blad=4">Blad 4</a>
-      </div>
     </div>
+    <a class="blad-button" style="top: 44%; left: 51.6%" data-blad="1"
+      >Blad 1</a
+    >
+    <a class="blad-button" style="top: 36.4%; left: 56.6%" data-blad="2"
+      >Blad 2</a
+    >
+    <a class="blad-button" style="top: 56.6%; left: 56.8%" data-blad="3"
+      >Blad 3</a
+    >
+    <a class="blad-button" style="top: 32.5%; left: 62.7%" data-blad="4"
+      >Blad 4</a
+    >
+    <a class="blad-button" style="top: 53%; left: 66.7%" data-blad="5"
+      >Blad 5</a
+    >
+    <a class="blad-button" style="top: 46%; left: 70%" data-blad="6">Blad 6</a>
+    <a class="blad-button" style="top: 27%; left: 74.8%" data-blad="7"
+      >Blad 7</a
+    >
+    <a class="blad-button" style="top: 49.4%; left: 77.3%" data-blad="8"
+      >Blad 8</a
+    >
+    <a class="blad-button" style="top: 70%; left: 74%" data-blad="9">Blad 9</a>
+    <a class="blad-button" style="top: 74.4%; left: 78.8%" data-blad="10"
+      >Blad 10</a
+    >
+    <a class="blad-button" style="top: 40.1%; left: 82%" data-blad="11"
+      >Blad 11</a
+    >
+    <a class="blad-button" style="top: 53%; left: 86.2%" data-blad="12"
+      >Blad 12</a
+    >
   </body>
 </html>
