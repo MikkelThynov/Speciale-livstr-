@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Medier - Mit Digitale Livstræ</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9f8f6;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+      header {
+        background-color: #a89783;
+        padding: 2rem;
+        text-align: center;
+        color: white;
+        position: relative;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+      }
+      .blad-label {
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+        color: white;
+      }
+      .back-btn {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #776756;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+      .back-btn:hover {
+        background-color: #5e5243;
+      }
+      main {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+      .upload-box {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      label[for="fileInput"] {
+        display: inline-block;
+        background-color: #a89783;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+        margin-bottom: 1rem;
+      }
+      label[for="fileInput"]:hover {
+        background-color: #776756;
+      }
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .preview-grid > div {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        position: relative;
+      }
+      .preview-grid img,
+      .preview-grid video,
+      .preview-grid audio {
+        max-width: 100%;
+        border-radius: 6px;
+      }
+      .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #776756;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="index.html" class="back-btn">← Tilbage</a>
+      <h1>Upload dine medier</h1>
+      <div class="blad-label" id="bladLabel"></div>
+    </header>
+    <main>
+      <div class="upload-box">
+        <label for="fileInput">Vælg filer</label>
+        <input
+          type="file"
+          id="fileInput"
+          multiple
+          accept="image/*,video/*,audio/*"
+        />
+        <div class="preview-grid" id="preview"></div>
+      </div>
+    </main>
+
+    <script>
+      const input = document.getElementById("fileInput");
+      const preview = document.getElementById("preview");
+      const params = new URLSearchParams(window.location.search);
+      const bladId = params.get("blad") || "default";
+      const storageKey = `livstrae_media_${bladId}`;
+
+      document.getElementById("bladLabel").textContent = `Blad ${bladId}`;
+
+      // Hent gemte data
+      function loadMedia() {
+        const data = JSON.parse(localStorage.getItem(storageKey)) || [];
+        data.forEach((item) => {
+          addMediaToPreview(item.blob, item.type);
+        });
+      }
+
+      function saveMedia(blobs) {
+        const existing = JSON.parse(localStorage.getItem(storageKey)) || [];
+        const updated = [...existing, ...blobs];
+        localStorage.setItem(storageKey, JSON.stringify(updated));
+      }
+
+      function addMediaToPreview(blobData, type) {
+        const blob = dataURItoBlob(blobData);
+        const url = URL.createObjectURL(blob);
+        const container = document.createElement("div");
+
+        let element;
+        if (type.startsWith("image/")) {
+          element = document.createElement("img");
+          element.src = url;
+        } else if (type.startsWith("video/")) {
+          element = document.createElement("video");
+          element.src = url;
+          element.controls = true;
+        } else if (type.startsWith("audio/")) {
+          element = document.createElement("audio");
+          element.src = url;
+          element.controls = true;
+        }
+
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "remove-btn";
+        removeBtn.textContent = "×";
+        removeBtn.onclick = () => {
+          preview.removeChild(container);
+          const updated = JSON.parse(localStorage.getItem(storageKey)).filter(
+            (item) => item.blob !== blobData
+          );
+          localStorage.setItem(storageKey, JSON.stringify(updated));
+        };
+
+        container.appendChild(removeBtn);
+        container.appendChild(element);
+        preview.appendChild(container);
+      }
+
+      function dataURItoBlob(dataURI) {
+        const byteString = atob(dataURI.split(",")[1]);
+        const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], { type: mimeString });
+      }
+
+      input.addEventListener("change", () => {
+        const newItems = [];
+
+        Array.from(input.files).forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const blobData = e.target.result;
+            newItems.push({ blob: blobData, type: file.type });
+            addMediaToPreview(blobData, file.type);
+            saveMedia(newItems);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        input.value = "";
+      });
+
+      loadMedia();
+    </script>
+  </body>
+</html>
