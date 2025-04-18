@@ -3,82 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Medier</title>
+    <title>Mit Digitale Livstræ</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
       body {
-        font-family: Arial, sans-serif;
-        background: #f0f0f0;
-        padding: 2rem;
-        max-width: 800px;
-        margin: auto;
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: url("/Images/lifetree7.png") no-repeat center center/cover;
+        background-attachment: fixed;
+        color: #ededed;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 4rem;
+      }
+      .overlay {
+        background-color: rgba(255, 255, 255, 0);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: left;
+        max-width: 600px;
       }
       h1 {
-        text-align: center;
-        color: #333;
+        font-size: 3rem;
+        font-weight: 600;
+        margin: 0.5rem 0;
+        animation: fadeIn 1s ease-in-out forwards;
       }
-      .upload-container {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        margin-top: 2rem;
+      p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeIn 1.5s ease-in-out forwards;
+        animation-delay: 0.3s;
       }
-      input[type="file"] {
-        display: block;
-        margin: 1rem 0;
+      .buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        opacity: 0;
+        animation: fadeIn 2s ease-in-out forwards;
+        animation-delay: 0.6s;
       }
-      .preview {
-        margin-top: 2rem;
+      .blad-link {
+        background-color: white;
+        color: #1d1d1d;
+        padding: 0.8rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s;
       }
-      .preview > * {
-        display: block;
-        margin-bottom: 1rem;
-        max-width: 100%;
+      .blad-link:hover {
+        background-color: #e8e4dd;
+        transform: translateY(-2px);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          align-items: center;
+          padding: 2rem;
+        }
+        .overlay {
+          align-items: center;
+          text-align: center;
+        }
+        h1 {
+          font-size: 2.2rem;
+        }
+        p {
+          font-size: 1rem;
+        }
+        .blad-link {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.95rem;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>Upload dine medier</h1>
-    <div class="upload-container">
-      <input
-        type="file"
-        id="fileInput"
-        multiple
-        accept="image/*,video/*,audio/*"
-      />
-      <div class="preview" id="preview"></div>
+    <div class="overlay">
+      <h1>Mit Digitale Livstræ</h1>
+      <p>
+        Hvert blad rummer en del af din historie. Klik på et blad og begynd din
+        rejse gennem minder, tanker og oplevelser.
+      </p>
+      <div class="buttons">
+        <a class="blad-link" href="upload.html?blad=1">Blad 1</a>
+        <a class="blad-link" href="upload.html?blad=2">Blad 2</a>
+        <a class="blad-link" href="upload.html?blad=3">Blad 3</a>
+        <a class="blad-link" href="upload.html?blad=4">Blad 4</a>
+      </div>
     </div>
-
-    <script>
-      const input = document.getElementById("fileInput");
-      const preview = document.getElementById("preview");
-
-      input.addEventListener("change", () => {
-        preview.innerHTML = ""; // Ryd visning
-
-        Array.from(input.files).forEach((file) => {
-          const url = URL.createObjectURL(file);
-
-          let element;
-          if (file.type.startsWith("image/")) {
-            element = document.createElement("img");
-            element.src = url;
-          } else if (file.type.startsWith("video/")) {
-            element = document.createElement("video");
-            element.src = url;
-            element.controls = true;
-          } else if (file.type.startsWith("audio/")) {
-            element = document.createElement("audio");
-            element.src = url;
-            element.controls = true;
-          } else {
-            element = document.createElement("p");
-            element.textContent = `Ukendt format: ${file.name}`;
-          }
-
-          preview.appendChild(element);
-        });
-      });
-    </script>
   </body>
 </html>
